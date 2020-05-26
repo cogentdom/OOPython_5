@@ -13,12 +13,15 @@ class ConfigKeyError(Exception):
 class ConfigPickleDict(dict):
 
     config_dir = '/Users/dom/PycharmProjects/Udemy_OOP/OOPython_5/configs/'
+    # config_dir = './configs/'
+
     def __init__(self, pickle_name):
-        self._filename = os.path.join(ConfigPickleDict.config_dir, pickle_name + '.pickle')
+        self._filename = os.path.join(ConfigPickleDict.config_dir, pickle_name)
         if not os.path.isfile(self._filename):
-            with open(self._filename, 'w') as fh:
+            with open(self._filename, 'wb') as fh:
                 pickle.dump({}, fh)
-        with open(self._filename) as fh:
+
+        with open(self._filename, 'wb+') as fh:
             pkl = pickle.load(fh)
             self.update(pkl)
 
@@ -29,5 +32,9 @@ class ConfigPickleDict(dict):
 
     def __setitem__(self, key, value):
         dict.__setitem__(self, key, value)
-        with open(self._filename, 'w') as fh:
-            pickle.dump(self, fh)
+        with open(self._filename, 'wb') as fh:
+            print(pickle.dump(self, fh))
+
+cd = ConfigPickleDict('config_file')
+cd['key'] = 'value'
+print (cd)

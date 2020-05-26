@@ -25,8 +25,4 @@ elif len(sys.argv) == 2:
 
 # if no arguments on the command line, show all keys and values
 else:
-    print('keys/values:')
-    for key in cd.keys():
-        print('   {0} = {1}'.format(key, cd[key]))
-
-print('unload pickle\t{0}'.format(cd.keys()))
+    print(cd.keys())
