@@ -1,5 +1,4 @@
 import os
-import pickle
 
 
 class ConfigKeyError(Exception):
@@ -10,17 +9,20 @@ class ConfigKeyError(Exception):
         return ('key "{0}" not found.  Available keys: '
                 '({1})'.format(self.key, ', '.join(self.keys)))
 
-class ConfigPickleDict(dict):
+class ConfigDict(dict):
 
-    config_dir = '/Users/dom/PycharmProjects/Udemy_OOP/OOPython_5/configs/'
-    def __init__(self, pickle_name):
-        self._filename = os.path.join(ConfigPickleDict.config_dir, pickle_name + '.pickle')
+    def __init__(self, filename):
+        self._filename = filename
         if not os.path.isfile(self._filename):
-            with open(self._filename, 'w') as fh:
-                pickle.dump({}, fh)
+            try:
+                open(self._filename, 'w').close()
+            except IOError:
+                raise IOError('arg to ConfigDict must be a valid filename')
         with open(self._filename) as fh:
-            pkl = pickle.load(fh)
-            self.update(pkl)
+            for line in fh:
+                line = line.rstrip()
+                key, value = line.split('=', 1)
+                dict.__setitem__(self, key, value)
 
     def __getitem__(self, key):
         if not key in self:
@@ -30,4 +32,5 @@ class ConfigPickleDict(dict):
     def __setitem__(self, key, value):
         dict.__setitem__(self, key, value)
         with open(self._filename, 'w') as fh:
-            pickle.dump(self, fh)
+            for key, val in self.items():
+                fh.write('{0}={1}\n'.format(key, val))
